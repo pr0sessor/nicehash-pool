@@ -221,6 +221,7 @@ func (cs *Session) handleNHTCPMessage(s *ProxyServer, req *StratumReq) error {
 		}
 		splitData := strings.Split(params[0], ".")
 		params[0] = splitData[0]
+		log.Println("----Logging in: ", params)
 		reply, errReply := s.handleLoginRPC(cs, params, req.Worker)
 		if errReply != nil {
 			return cs.sendTCPNHError(req.Id, []string{
