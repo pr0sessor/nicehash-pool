@@ -17,17 +17,21 @@ var workerPattern = regexp.MustCompile("^[0-9a-zA-Z-_]{1,8}$")
 // Stratum
 func (s *ProxyServer) handleLoginRPC(cs *Session, params []string, id string) (bool, *ErrorReply) {
 	if len(params) == 0 {
+		log.Println("handleLoginRPC: Invalid params")
 		return false, &ErrorReply{Code: -1, Message: "Invalid params"}
 	}
 
 	login := strings.ToLower(params[0])
 	if !util.IsValidHexAddress(login) {
+		log.Println("handleLoginRPC: Invalid login")
 		return false, &ErrorReply{Code: -1, Message: "Invalid login"}
 	}
 	if !s.policy.ApplyLoginPolicy(login, cs.ip) {
+		log.Println("handleLoginRPC: You are blacklisted")
 		return false, &ErrorReply{Code: -1, Message: "You are blacklisted"}
 	}
 	cs.login = login
+	log.Println("----logging in")
 	s.registerSession(cs)
 	log.Printf("Stratum miner connected %v@%v", login, cs.ip)
 	return true, nil
